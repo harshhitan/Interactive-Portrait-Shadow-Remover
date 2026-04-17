@@ -8,4 +8,3 @@ pillow
 opencv-python
 scikit-image
 lpips
-vgg16
