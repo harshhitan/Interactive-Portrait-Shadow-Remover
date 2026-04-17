@@ -48,12 +48,13 @@ with col1:
         # Dynamically generate key based on file to prevent caching issues in st_canvas
         canvas_key = f"canvas_{uploaded_file.name}-{uploaded_file.size}"
 
+        st.image(display_image, use_column_width=True)
+
         canvas_result = st_canvas(
             fill_color="rgba(255, 0, 0, 0.3)",
             stroke_width=20,
             stroke_color="rgba(255, 0, 0, 0.6)",
-            background_image=display_image,
-            update_streamlit=True,
+            background_color="rgba(0,0,0,0)",  # transparent canvas
             height=512,
             width=512,
             drawing_mode="freedraw",
