@@ -1,0 +1,11 @@
+# Python Artifacts
+__pycache__/
+venv/
+
+# Heavy Datasets and Model Checkpoints
+data/
+checkpoint/
+checkpoints/
+*.pth
+*.pt
+*.h5
