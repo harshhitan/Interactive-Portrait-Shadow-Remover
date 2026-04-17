@@ -58,21 +58,14 @@ with col1:
         img_base64 = image_to_base64(display_image)
 
         # Overlay container
-        st.markdown(
-            f"""
-            <div style="position: relative; width: 512px; height: 512px;">
-                <img src="data:image/png;base64,{img_base64}"
-                    style="position: absolute; top: 0; left: 0; width: 512px; height: 512px;"/>
-                <div style="position: absolute; top: 0; left: 0;">
-            """,
-            unsafe_allow_html=True
-        )
+        display_image = image_raw.resize((512, 512)).convert("RGB")
 
         canvas_result = st_canvas(
-            fill_color="rgba(255, 0, 0, 0.25)",
+            fill_color="rgba(255, 0, 0, 0.3)",
             stroke_width=20,
             stroke_color="rgba(255, 0, 0, 0.6)",
-            background_color="rgba(0,0,0,0)",  # transparent
+            background_image=display_image,  
+            update_streamlit=True,
             height=512,
             width=512,
             drawing_mode="freedraw",
