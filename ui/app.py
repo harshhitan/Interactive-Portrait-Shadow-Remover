@@ -55,19 +55,19 @@ with col1:
     if uploaded_file is not None:
         image_raw = Image.open(uploaded_file).convert("RGB")
         image = image_raw.resize((256, 256))
-        st.markdown("### 1. Highlight the Shadow Area")
-        st.image(image, caption="Reference (Paint over the shadows here)", use_column_width=True)
-        
-        # Creating drawable canvas where user marks shadow
+        st.markdown("### 1. Draw Over the Shadow Area")
+        st.caption("Paint directly on the face below to mark the shadow region.")
+
+        # Canvas with face image as background — draw directly on it
         canvas_result = st_canvas(
-            fill_color="rgba(255, 255, 255, 0.3)", # Semi-transparent white
-            stroke_width=15,            
-            stroke_color="white",       
-            background_image=image,     
+            fill_color="rgba(255, 255, 255, 0.0)",
+            stroke_width=20,
+            stroke_color="rgba(255, 255, 255, 0.85)",
+            background_image=image,
             update_streamlit=True,
             height=256,
             width=256,
-            drawing_mode="freedraw",    
+            drawing_mode="freedraw",
             key="canvas",
         )
 
