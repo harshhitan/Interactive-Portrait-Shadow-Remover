@@ -1,7 +1,7 @@
 torch
 torchvision
 streamlit==1.28.0
-streamlit-drawable-canvas
+streamlit-drawable-canvas==0.9.0
 huggingface_hub
 numpy
 pillow
