@@ -40,7 +40,7 @@ with col1:
         image_raw = Image.open(uploaded_file).convert("RGB")
         image = image_raw.resize((256, 256))
         # Convert to RGBA specifically for streamlit-drawable-canvas robustness
-        display_image = np.array(image_raw.resize((512, 512)).convert("RGB"))
+        display_image = image_raw.resize((512, 512)).convert("RGB")
         
         st.markdown("### 1. Highlight the Shadow Area")
         st.caption("Draw over the shadow. The red mask helps you see the underlying image.")
