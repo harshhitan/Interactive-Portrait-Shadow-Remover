@@ -5,6 +5,6 @@ streamlit-drawable-canvas
 huggingface_hub
 numpy
 pillow
-opencv-python
+opencv-python-headless
 scikit-image
 lpips
