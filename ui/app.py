@@ -38,21 +38,25 @@ st.markdown("Upload a portrait, paint over the shadowed region, and our custom *
 
 model, device = load_custom_unet()
 
-col1, col2 = st.columns(2)
+# Move the file uploader above the columns so it spans the full width
+uploaded_file = st.file_uploader("Upload Shadowed Portrait", type=['png', 'jpg', 'jpeg'])
 
-with col1:
-    uploaded_file = st.file_uploader("Upload Shadowed Portrait", type=['png', 'jpg', 'jpeg'])
-    if uploaded_file is not None:
-        image_raw = Image.open(uploaded_file).convert("RGB")
-        image = image_raw.resize((256, 256))
-        # Convert to RGBA specifically for streamlit-drawable-canvas robustness
-        display_image = image_raw.resize((512, 512)).convert("RGB")
-        
+if uploaded_file is not None:
+    # Create 3 columns: Left for Image, Middle for Mask, Right for Output
+    col1, col2, col3 = st.columns(3)
+
+    image_raw = Image.open(uploaded_file).convert("RGB")
+    image = image_raw.resize((256, 256))
+    display_image = image_raw.resize((512, 512)).convert("RGB")
+    
+    with col1:
         st.markdown("### 1. View Uploaded Image")
-        st.image(display_image, width=512)
+        # use_container_width ensures it scales nicely inside the column
+        st.image(display_image, use_container_width=True)
 
+    with col2:
         st.markdown("### 2. Draw Mask")
-        st.caption("Draw the shadow mask on the canvas below. The canvas maps 1:1 to your image.")
+        st.caption("Draw the shadow mask on the canvas below.")
         
         canvas_key = f"canvas_{uploaded_file.name}-{uploaded_file.size}"
 
@@ -68,14 +72,12 @@ with col1:
             key=canvas_key,
         )
 
-with col2:
-    if uploaded_file is not None:
+    with col3:
         st.markdown("### 3. Shadow Removed Output")
         if st.button("Run Shadow Removal", type="primary"):
 
             if canvas_result.image_data is not None:
                 mask_data = np.array(canvas_result.image_data, dtype=np.uint8)
-                # Since stroke is white on black background, Red channel (or alpha) dictates drawn areas
                 binary_mask_512 = (mask_data[:, :, 0] > 0).astype(np.uint8) * 255
                 mask_pil_512 = Image.fromarray(binary_mask_512, mode="L")
                 mask_pil = mask_pil_512.resize((256, 256), Image.NEAREST)
@@ -109,4 +111,4 @@ with col2:
                     result_image = Image.fromarray(blended_np).resize((512, 512))
 
                 st.success("Shadow Removal Complete!")
-                st.image(result_image, caption="U-Net Output", use_column_width=True)
+                st.image(result_image, caption="U-Net Output", use_container_width=True)
