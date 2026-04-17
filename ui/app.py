@@ -39,10 +39,14 @@ with col1:
     if uploaded_file is not None:
         image_raw = Image.open(uploaded_file).convert("RGB")
         image = image_raw.resize((256, 256))
-        display_image = image_raw.resize((512, 512))
+        # Convert to RGBA specifically for streamlit-drawable-canvas robustness
+        display_image = image_raw.resize((512, 512)).convert("RGBA")
         
         st.markdown("### 1. Highlight the Shadow Area")
         st.caption("Draw over the shadow. The red mask helps you see the underlying image.")
+
+        # Dynamically generate key based on file to prevent caching issues in st_canvas
+        canvas_key = f"canvas_{uploaded_file.name}-{uploaded_file.size}"
 
         canvas_result = st_canvas(
             fill_color="rgba(255, 0, 0, 0.3)",
@@ -53,7 +57,7 @@ with col1:
             height=512,
             width=512,
             drawing_mode="freedraw",
-            key="canvas",
+            key=canvas_key,
         )
 
 with col2:
