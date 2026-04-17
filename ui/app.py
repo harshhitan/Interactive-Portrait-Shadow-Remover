@@ -13,7 +13,13 @@ if BASE_DIR not in sys.path:
 
 from src.train_unet import ShadowRemoverUNet
 from streamlit_drawable_canvas import st_canvas
+import base64
+from io import BytesIO
 
+def image_to_base64(img):
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
 st.set_page_config(layout="wide", page_title="Interactive Portrait Shadow Removal")
 
 @st.cache_resource
@@ -48,19 +54,32 @@ with col1:
         # Dynamically generate key based on file to prevent caching issues in st_canvas
         canvas_key = f"canvas_{uploaded_file.name}-{uploaded_file.size}"
 
-        st.image(display_image, use_column_width=True)
+        # Convert image to base64 for HTML overlay
+        img_base64 = image_to_base64(display_image)
+
+        # Overlay container
+        st.markdown(
+            f"""
+            <div style="position: relative; width: 512px; height: 512px;">
+                <img src="data:image/png;base64,{img_base64}"
+                    style="position: absolute; top: 0; left: 0; width: 512px; height: 512px;"/>
+                <div style="position: absolute; top: 0; left: 0;">
+            """,
+            unsafe_allow_html=True
+        )
 
         canvas_result = st_canvas(
-            fill_color="rgba(255, 0, 0, 0.3)",
+            fill_color="rgba(255, 0, 0, 0.25)",
             stroke_width=20,
             stroke_color="rgba(255, 0, 0, 0.6)",
-            background_color="rgba(0,0,0,0)",  # transparent canvas
+            background_color="rgba(0,0,0,0)",  # transparent
             height=512,
             width=512,
             drawing_mode="freedraw",
             key=canvas_key,
         )
 
+        st.markdown("</div></div>", unsafe_allow_html=True)
 with col2:
     if uploaded_file is not None:
         st.markdown("### 2. Shadow Removed Output")
@@ -68,8 +87,7 @@ with col2:
 
             if canvas_result.image_data is not None:
                 mask_data = np.array(canvas_result.image_data, dtype=np.uint8)
-                mask_alpha = mask_data[:, :, 3]
-                binary_mask_512 = (mask_alpha > 5).astype(np.uint8) * 255
+                binary_mask_512 = (mask_data[:, :, 0] > 0).astype(np.uint8) * 255
                 mask_pil_512 = Image.fromarray(binary_mask_512, mode="L")
                 mask_pil = mask_pil_512.resize((256, 256), Image.NEAREST)
                 binary_mask = np.array(mask_pil)
