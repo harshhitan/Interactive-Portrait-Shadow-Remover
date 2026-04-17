@@ -39,16 +39,19 @@ with col1:
     if uploaded_file is not None:
         image_raw = Image.open(uploaded_file).convert("RGB")
         image = image_raw.resize((256, 256))
+        display_image = image_raw.resize((512, 512))
+        
         st.markdown("### 1. Highlight the Shadow Area")
+        st.caption("Draw over the shadow. The red mask helps you see the underlying image.")
 
         canvas_result = st_canvas(
-            fill_color="white",
-            stroke_width=15,
-            stroke_color="white",
-            background_image=image,
+            fill_color="rgba(255, 0, 0, 0.3)",
+            stroke_width=20,
+            stroke_color="rgba(255, 0, 0, 0.5)",
+            background_image=display_image,
             update_streamlit=True,
-            height=256,
-            width=256,
+            height=512,
+            width=512,
             drawing_mode="freedraw",
             key="canvas",
         )
@@ -61,8 +64,10 @@ with col2:
             if canvas_result.image_data is not None:
                 mask_data = np.array(canvas_result.image_data, dtype=np.uint8)
                 mask_alpha = mask_data[:, :, 3]
-                binary_mask = (mask_alpha > 5).astype(np.uint8) * 255
-                mask_pil = Image.fromarray(binary_mask, mode="L")
+                binary_mask_512 = (mask_alpha > 5).astype(np.uint8) * 255
+                mask_pil_512 = Image.fromarray(binary_mask_512, mode="L")
+                mask_pil = mask_pil_512.resize((256, 256), Image.NEAREST)
+                binary_mask = np.array(mask_pil)
             else:
                 binary_mask = np.zeros((256, 256), dtype=np.uint8)
                 mask_pil = None
