@@ -8,3 +8,4 @@ pillow
 opencv-python-headless
 scikit-image
 lpips
+facenet-pytorch

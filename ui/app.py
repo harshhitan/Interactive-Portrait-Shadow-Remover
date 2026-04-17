@@ -31,10 +31,11 @@ def load_custom_unet():
         from huggingface_hub import hf_hub_download
         ckpt_path = hf_hub_download(repo_id="harshhitan/interactive-shadow-remover", filename="best_shadow_unet.pth")
             
-    model = ShadowRemoverUNet()
-    model.load_state_dict(torch.load(ckpt_path, map_location=device))
-    model.to(device)
-    model.eval()
+    with st.spinner("Initializing Neural Architecture (this may take a minute)..."):
+        model = ShadowRemoverUNet()
+        model.load_state_dict(torch.load(ckpt_path, map_location=device))
+        model.to(device)
+        model.eval()
     return model, device
 
 st.title("Interactive Portrait Shadow Removal")
