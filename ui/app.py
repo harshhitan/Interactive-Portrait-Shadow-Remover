@@ -56,10 +56,11 @@ with col1:
         image_raw = Image.open(uploaded_file).convert("RGB")
         image = image_raw.resize((256, 256))
         st.markdown("### 1. Highlight the Shadow Area")
+        st.image(image, caption="Reference (Paint over the shadows here)", use_column_width=True)
         
         # Creating drawable canvas where user marks shadow
         canvas_result = st_canvas(
-            fill_color="white",         
+            fill_color="rgba(255, 255, 255, 0.3)", # Semi-transparent white
             stroke_width=15,            
             stroke_color="white",       
             background_image=image,     
