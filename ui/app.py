@@ -52,7 +52,7 @@ if uploaded_file is not None:
     with col1:
         st.markdown("### 1. View Uploaded Image")
         # use_container_width ensures it scales nicely inside the column
-        st.image(display_image, use_container_width=True)
+        st.image(display_image,  width=512)
 
     with col2:
         st.markdown("### 2. Draw Mask")
@@ -111,4 +111,4 @@ if uploaded_file is not None:
                     result_image = Image.fromarray(blended_np).resize((512, 512))
 
                 st.success("Shadow Removal Complete!")
-                st.image(result_image, caption="U-Net Output", use_container_width=True)
+                st.image(result_image, caption="U-Net Output",  width=512)
